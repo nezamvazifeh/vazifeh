@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>سامانه استعلام وضعیت مشمولین - سازمان نظام وظیفه</title>
+
+<style>
+  :root {
+    --primary: #1a472a;
+    --primary-light: #2d6a4f;
+    --primary-dark: #0d2b1a;
+    --gold: #d4a843;
+    --gold-light: #f0d68a;
+    --bg: #f0f4f0;
+    --card: #ffffff;
+    --muted: #6b7280;
+    --danger: #b91c1c;
+    --success: #15803d;
+    --radius: 12px;
+    --shadow: 0 8px 30px rgba(26, 71, 42, 0.12);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, 'IranSans', sans-serif;
+    background: var(--bg);
+    color: #1a1a2e;
+    padding-bottom: 80px;
+    min-height: 100vh;
+  }
+
+  /* هدر نظام وظیفه */
+  .top-banner {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    font-size: 15px;
+    font-weight: 500;
+    border-bottom: 3px solid var(--gold);
+    flex-wrap: wrap;
+  }
+
+  .top-banner .logo-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--primary-dark);
+    box-shadow: 0 2px 12px rgba(212, 168, 67, 0.3);
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    text-align: center;
+    font-weight: 700;
+    font-size: 22px;
+    padding: 22px 20px;
+    box-shadow: 0 4px 20px rgba(26, 71, 42, 0.25);
+    letter-spacing: 0.5px;
+    border-bottom: 4px solid var(--gold);
+  }
+
+  header small {
+    display: block;
+    font-size: 14px;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-top: 6px;
+  }
+
+  .wrapper {
+    max-width: 860px;
+    margin: 30px auto;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+    border: 1px solid rgba(26, 71, 42, 0.08);
+  }
+
+  .wrapper:hover {
+    transform: translateY(-2px);
+  }
+
+  label {
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: block;
+    color: var(--primary-dark);
+    font-size: 17px;
+  }
+
+  .input-group {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .input-group input {
+    flex: 1;
+    padding: 16px 20px;
+    font-size: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: var(--radius);
+    text-align: center;
+    outline: none;
+    transition: all 0.3s;
+    min-width: 200px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    background: #fafcfa;
+    direction: ltr;
+  }
+
+  .input-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(26, 71, 42, 0.12);
+    background: #fff;
+  }
+
+  .input-group input::placeholder {
+    font-weight: 400;
+    letter-spacing: 0;
+    color: #a0aec0;
+    direction: rtl;
+  }
+
+  .btn {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    border: none;
+    padding: 16px 32px;
+    border-radius: var(--radius);
+    font-weight: 700;
+    font-size: 17px;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+    min-width: 130px;
+    box-shadow: 0 4px 12px rgba(26, 71, 42, 0.2);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(26, 71, 42, 0.3);
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn-secondary {
+    background: #e5e7eb;
+    color: #1a1a2e;
+    min-width: auto;
+    padding: 16px 20px;
+    box-shadow: none;
+  }
+
+  .btn-secondary:hover {
+    background: #d1d5db;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .help {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 12px;
+    padding-right: 4px;
+  }
+
+  /* وضعیت‌ها */
+  .status-box {
+    margin-top: 18px;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    display: none;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s;
+    font-size: 16px;
+  }
+
+  .loading {
+    background: #ebf8ff;
+    color: #065f46;
+    border: 2px solid #a7f3d0;
+  }
+
+  .loading::after {
+    content: '...';
+    animation: dots 1.5s steps(4) infinite;
+  }
+
+  @keyframes dots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+  }
+
+  .error {
+    background: #fef2f2;
+    color: var(--danger);
+    border: 2px solid #fca5a5;
+  }
+
+  .success {
+    background: #ecfdf5;
+    color: var(--success);
+    border: 2px solid #6ee7b7;
+  }
+
+  /* کارت نتیجه نظام وظیفه */
+  .result {
+    margin-top: 28px;
+    border-radius: var(--radius);
+    padding: 0;
+    border: 2px solid #e5e7eb;
+    background: #fafcfa;
+    display: none;
+    animation: fadeIn 0.5s ease;
+    overflow: hidden;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    font-weight: 800;
+    font-size: 20px;
+    text-align: center;
+    padding: 18px;
+    border-bottom: 3px solid var(--gold);
+  }
+
+  .result-header .sub {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.85;
+    margin-top: 4px;
+  }
+
+  .result-body {
+    padding: 24px;
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .result-item {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 18px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s;
+  }
+
+  .result-item:hover {
+    border-color: var(--primary-light);
+    box-shadow: 0 2px 8px rgba(26, 71, 42, 0.06);
+  }
+
+  .result-item .label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .result-item .value {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-top: 6px;
+    direction: ltr;
+  }
+
+  .result-item .value.rtl {
+    direction: rtl;
+  }
+
+  .result-item.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .result-item.highlight {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-color: var(--gold);
+  }
+
+  .result-item.highlight .value {
+    color: var(--primary-dark);
+  }
+
+  .result-status {
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 15px;
+    background: #fef3c7;
+    color: #92400e;
+    border: 2px solid #f59e0b;
+  }
+
+  .result-status.active {
+    background: #dbeafe;
+    color: #1e40af;
+    border-color: #3b82f6;
+  }
+
+  .result-status.done {
+    background: #d1fae5;
+    color: #065f46;
+    border-color: #10b981;
+  }
+
+  /* فوتر */
+  .bottom-banner {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: var(--primary-dark);
+    color: #e2e8f0;
+    text-align: center;
+    font-size: 13px;
+    padding: 14px;
+    border-top: 3px solid var(--gold);
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+
+  .bottom-banner a {
+    color: var(--gold-light);
+    font-weight: 600;
+    text-decoration: none;
+    margin: 0 8px;
+    transition: color 0.2s;
+  }
+
+  .bottom-banner a:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  .bottom-banner .separator {
+    color: #4a5568;
+    margin: 0 6px;
+  }
+
+  /* ریسپانسیو */
+  @media (max-width: 640px) {
+    header {
+      font-size: 18px;
+      padding: 18px 16px;
+    }
+
+    header small {
+      font-size: 12px;
+    }
+
+    .wrapper {
+      padding: 20px;
+      margin: 16px 12px;
+    }
+
+    .input-group {
+      flex-direction: column;
+    }
+
+    .input-group input {
+      width: 100%;
+      font-size: 18px;
+      padding: 14px;
+    }
+
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .result-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .top-banner {
+      font-size: 13px;
+      padding: 10px 14px;
+    }
+
+    .bottom-banner {
+      font-size: 11px;
+      padding: 10px;
+    }
+
+    .result-header {
+      font-size: 17px;
+      padding: 14px;
+    }
+
+    .result-body {
+      padding: 16px;
+    }
+
+    .result-item .value {
+      font-size: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .result-item .value {
+      font-size: 14px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-banner">
+  <div class="logo-icon">⚔️</div>
+  <span>سامانه یکپارچه مدیریت مشمولین - سازمان نظام وظیفه عمومی</span>
+</div>
+
+<header>
+  استعلام وضعیت مشمولین و کارکنان وظیفه
+  <small>پایگاه اطلاعاتی نیروهای مسلح جمهوری اسلامی ایران</small>
+</header>
+
+<div class="wrapper">
+  <label for="code">🔑 کد پیگیری وضعیت مشمولیت</label>
+  <div class="input-group">
+    <input 
+      id="code" 
+      type="text" 
+      inputmode="numeric" 
+      placeholder="مثال: ۱۲۵۸۷۴۶۳" 
+      maxlength="8"
+      autocomplete="off"
+    />
+    <button id="checkBtn" class="btn">استعلام</button>
+    <button id="clearBtn" class="btn btn-secondary">✕</button>
+  </div>
+  <div class="help">کد ۸ رقمی مندرج در کارت معافیت یا برگه اعزام را وارد نمایید.</div>
+
+  <div id="loading" class="status-box loading">⏳ در حال استعلام از سامانه مرکزی</div>
+  <div id="errorBox" class="status-box error"></div>
+  <div id="successBox" class="status-box success">✅ اطلاعات مشمول با موفقیت یافت شد</div>
+
+  <div id="resultCard" class="result">
+    <div class="result-header">
+      📋 وضعیت مشمولیت
+      <span class="sub">اطلاعات بروز شده در تاریخ ۱۴۰۳/۰۸/۰۱</span>
+    </div>
+    <div class="result-body">
+      <div class="result-grid">
+        <div class="result-item highlight full-width">
+          <span class="label">وضعیت مشمول</span>
+          <span class="value" id="status">
+            <span class="result-status" id="statusBadge">در حال بررسی</span>
+          </span>
+        </div>
+
+        <div class="result-item">
+          <span class="label">نام و نام خانوادگی</span>
+          <span class="value rtl" id="name">—</span>
+        </div>
+
+        <div class="result-item">
+          <span class="label">کد ملی</span>
+          <span class="value" id="nationalId">—</span>
+        </div>
+
+        <div class="result-item">
+          <span class="label">نام پدر</span>
+          <span class="value rtl" id="fatherName">—</span>
+        </div>
+
+        <div class="result-item">
+          <span class="label">تاریخ تولد</span>
+          <span class="value" id="birthDate">—</span>
+        </div>
+
+        <div class="result-item">
+          <span class="label">تاریخ شروع خدمت</span>
+          <span class="value" id="startDate">—</span>
+        </div>
+
+        <div class="result-item">
+          <span class="label">تاریخ پایان خدمت</span>
+          <span class="value" id="endDate">—</span>
+        </div>
+
+        <div class="result-item">
+          <span class="label">درجه خدمتی</span>
+          <span class="value rtl" id="rank">—</span>
+        </div>
+
+        <div class="result-item full-width">
+          <span class="label">محل خدمت / یگان</span>
+          <span class="value rtl" id="location">—</span>
+        </div>
+
+        <div class="result-item full-width">
+          <span class="label">توضیحات تکمیلی</span>
+          <span class="value rtl" id="description" style="font-size:14px;font-weight:400;">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-banner">
+  🔹 <a href="https://vazifeh.ir/" target="_blank">سامانه خدمات الکترونیک نظام وظیفه</a>
+  <span class="separator">|</span>
+  <a href="https://www.aja.ir/" target="_blank">ارتش جمهوری اسلامی ایران</a>
+  <span class="separator">|</span>
+  <span style="opacity:0.6;">نسخه ۳.۰ - سامانه مشمولین</span>
+</div>
+
+<script>
+(function(){
+
+  // ========== دیتابیس مشمولین ==========
+  const records = {
+    // اطلاعات نمونه شما
+    "12587463": {
+      name: "علیرضا عوض آقائی",
+      nationalId: "۲۴۲۰۴۵۴۰۵۷",
+      fatherName: "حسین",
+      birthDate: "۱۳۸۲/۰۳/۱۵",
+      startDate: "۱۴۰۳/۰۵/۰۶",
+      endDate: "۱۴۰۵/۰۵/۰۶",
+      rank: "سرباز سرجوخه",
+      location: "پادگان ابوذر - مرزی",
+      status: "در حال بررسی و تکمیل فرآیند",
+      description: "مشمول در حال طی دوره آموزشی پایه - وضعیت: عادی"
+    },
+
+    // اطلاعات نمونه اضافی
+    "89341562": {
+      name: "محمد رضائیان",
+      nationalId: "۱۲۳۴۵۶۷۸۹۰",
+      fatherName: "علی",
+      birthDate: "۱۳۸۰/۰۷/۲۰",
+      startDate: "۱۴۰۲/۰۹/۱۰",
+      endDate: "۱۴۰۴/۰۹/۱۰",
+      rank: "سرباز وظیفه",
+      location: "پادگان شهید دوران - مشهد",
+      status: "در حال خدمت",
+      description: "دوره تخصصی مخابرات - وضعیت: فعال"
+    },
+
+    "47851269": {
+      name: "سعید مرادی",
+      nationalId: "۹۸۷۶۵۴۳۲۱۰",
+      fatherName: "حسن",
+      birthDate: "۱۳۷۹/۱۱/۰۵",
+      startDate: "۱۴۰۱/۱۲/۰۱",
+      endDate: "۱۴۰۳/۱۲/۰۱",
+      rank: "سرباز گروهبان دوم",
+      location: "پادگان شهید صیاد شیرازی - تهران",
+      status: "پایان خدمت",
+      description: "خدمت مقدس به پایان رسیده - وضعیت: معافیت دائم"
+    },
+
+    "85236974": {
+      name: "امیر حسینی",
+      nationalId: "۵۵۵۵۵۵۵۵۵۵",
+      fatherName: "رضا",
+      birthDate: "۱۳۸۱/۰۲/۱۴",
+      startDate: "۱۴۰۳/۰۱/۲۰",
+      endDate: "۱۴۰۵/۰۱/۲۰",
+      rank: "سرباز سرجوخه",
+      location: "پادگان ولیعصر - کرج",
+      status: "در حال خدمت",
+      description: "دوره رزمی مقدماتی - وضعیت: فعال"
+    },
+
+    "74123658": {
+      name: "حسین اکبری",
+      nationalId: "۷۷۷۷۷۷۷۷۷۷",
+      fatherName: "محمود",
+      birthDate: "۱۳۸۰/۰۶/۳۰",
+      startDate: "۱۴۰۲/۰۷/۱۵",
+      endDate: "۱۴۰۴/۰۷/۱۵",
+      rank: "سرباز گروهبان سوم",
+      location: "پادگان شهید ستاری - اصفهان",
+      status: "در حال خدمت",
+      description: "دوره تخصصی رایانه - وضعیت: فعال"
+    }
+  };
+
+  // ========== عناصر DOM ==========
+  const codeInput = document.getElementById('code');
+  const checkBtn = document.getElementById('checkBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const loading = document.getElementById('loading');
+  const errorBox = document.getElementById('errorBox');
+  const successBox = document.getElementById('successBox');
+  const resultCard = document.getElementById('resultCard');
+
+  const fields = {
+    name: 'name',
+    nationalId: 'nationalId',
+    fatherName: 'fatherName',
+    birthDate: 'birthDate',
+    startDate: 'startDate',
+    endDate: 'endDate',
+    rank: 'rank',
+    location: 'location',
+    status: 'status',
+    description: 'description'
+  };
+
+  function hideAllStatus() {
+    loading.style.display = 'none';
+    errorBox.style.display = 'none';
+    successBox.style.display = 'none';
+    resultCard.style.display = 'none';
+  }
+
+  function showError(text) {
+    hideAllStatus();
+    errorBox.innerText = '❌ ' + text;
+    errorBox.style.display = 'block';
+    errorBox.style.animation = 'none';
+    setTimeout(() => errorBox.style.animation = 'shake 0.4s ease', 10);
+  }
+
+  function showSuccess() {
+    successBox.style.display = 'block';
+  }
+
+  function getStatusBadge(status) {
+    const statusMap = {
+      'در حال بررسی و تکمیل فرآیند': 'active',
+      'در حال خدمت': 'active',
+      'پایان خدمت': 'done'
+    };
+    return statusMap[status] || '';
+  }
+
+  function showResult(data) {
+    // پر کردن فیلدها
+    document.getElementById('name').innerText = data.name || '—';
+    document.getElementById('nationalId').innerText = data.nationalId || '—';
+    document.getElementById('fatherName').innerText = data.fatherName || '—';
+    document.getElementById('birthDate').innerText = data.birthDate || '—';
+    document.getElementById('startDate').innerText = data.startDate || '—';
+    document.getElementById('endDate').innerText = data.endDate || '—';
+    document.getElementById('rank').innerText = data.rank || '—';
+    document.getElementById('location').innerText = data.location || '—';
+    document.getElementById('description').innerText = data.description || '—';
+    
+    // وضعیت با بج
+    const statusText = data.status || 'نامشخص';
+    const badgeClass = getStatusBadge(statusText);
+    document.getElementById('statusBadge').innerHTML = statusText;
+    document.getElementById('statusBadge').className = 'result-status ' + badgeClass;
+
+    resultCard.style.display = 'block';
+    setTimeout(() => resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+  }
+
+  function checkCode() {
+    const code = codeInput.value.trim().replace(/\s/g, '');
+    hideAllStatus();
+
+    if (!/^\d{8}$/.test(code)) {
+      showError('کد وارد شده معتبر نیست. لطفاً کد ۸ رقمی صحیح را وارد کنید.');
+      return;
+    }
+
+    loading.style.display = 'block';
+
+    setTimeout(() => {
+      loading.style.display = 'none';
+      const data = records[code];
+      
+      if (data) {
+        showSuccess();
+        showResult(data);
+        errorBox.style.display = 'none';
+      } else {
+        showError('کد پیگیری نامعتبر است یا اطلاعاتی برای این کد ثبت نشده است.');
+        resultCard.style.display = 'none';
+      }
+    }, 1500 + Math.random() * 1000);
+  }
+
+  // ========== رویدادها ==========
+  checkBtn.addEventListener('click', checkCode);
+
+  codeInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      checkCode();
+    }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    codeInput.value = '';
+    codeInput.focus();
+    hideAllStatus();
+  });
+
+  codeInput.addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);
+  });
+
+  // ========== انیمیشن شیک ==========
+  const styleShake = document.createElement('style');
+  styleShake.textContent = `
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+  `;
+  document.head.appendChild(styleShake);
+
+  window.addEventListener('load', () => {
+    codeInput.focus();
+  });
+
+})();
+</script>
+
+</body>
+</html>
