@@ -392,9 +392,9 @@
 <div id="loginContainer" class="login-container">
   <h2>پنل مدیریت</h2>
   <label>نام کاربری</label>
-  <input id="loginUser" type="text" value="admin" />
+  <input id="loginUser" type="text" placeholder="نام کاربری را وارد کنید" />
   <label>رمز عبور</label>
-  <input id="loginPass" type="password" value="admin" />
+  <input id="loginPass" type="password" placeholder="رمز عبور را وارد کنید" />
   <button class="btn" id="loginBtn">ورود</button>
   <div id="loginError" class="login-error">❌ نام کاربری یا رمز عبور اشتباه است</div>
 </div>
@@ -673,7 +673,7 @@
   function doLogin() {
     const user = document.getElementById('loginUser').value.trim();
     const pass = document.getElementById('loginPass').value.trim();
-    if (user === 'admin' && pass === 'admin') {
+    if (user === 'admin' && pass === 'admin19') {  // <-- رمز عبور تغییر کرد
       loginContainer.style.display = 'none';
       adminPanel.style.display = 'block';
       loginError.style.display = 'none';
