@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>پنل مدیریت - سامانه مشمولین</title>
+
+<style>
+  :root {
+    --primary: #0a2a1a;
+    --primary-light: #1a4a2a;
+    --gold: #b8963a;
+    --bg: #f0f2f0;
+    --card: #ffffff;
+    --danger: #991b1b;
+    --success: #166534;
+    --radius: 8px;
+    --shadow: 0 4px 24px rgba(10, 42, 26, 0.10);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Tahoma', 'IranSans', sans-serif;
+    background: var(--bg);
+    color: #1a1a2e;
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  .login-container {
+    max-width: 400px;
+    margin: 80px auto;
+    background: var(--card);
+    padding: 32px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid #e5e7eb;
+  }
+
+  .login-container h2 {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 24px;
+    font-size: 20px;
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 12px;
+  }
+
+  .login-container label {
+    display: block;
+    font-weight: 700;
+    margin: 12px 0 6px;
+    font-size: 14px;
+    color: var(--primary);
+  }
+
+  .login-container input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #d1d5db;
+    border-radius: var(--radius);
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s;
+  }
+
+  .login-container input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(10, 42, 26, 0.08);
+  }
+
+  .login-container .btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 18px;
+    transition: 0.2s;
+  }
+
+  .login-container .btn:hover {
+    background: var(--primary-light);
+  }
+
+  .login-error {
+    color: var(--danger);
+    text-align: center;
+    margin-top: 12px;
+    font-weight: 600;
+    display: none;
+  }
+
+  /* ===== پنل مدیریت ===== */
+  .admin-panel {
+    display: none;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .admin-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 16px 24px;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+    border-bottom: 3px solid var(--gold);
+  }
+
+  .admin-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .admin-header .logout-btn {
+    background: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    transition: 0.2s;
+  }
+
+  .admin-header .logout-btn:hover {
+    background: #fff;
+    color: var(--primary);
+  }
+
+  .admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-box {
+    background: var(--card);
+    padding: 18px;
+    border-radius: var(--radius);
+    border: 1px solid #e5e7eb;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+
+  .stat-box .number {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+
+  .stat-box .label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .admin-card {
+    background: var(--card);
+    padding: 24px;
+    border-radius: var(--radius);
+    border: 1px solid #e5e7eb;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+
+  .admin-card h3 {
+    color: var(--primary);
+    margin-bottom: 16px;
+    font-size: 17px;
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 8px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .form-grid .full-width {
+    grid-column: 1 / -1;
+  }
+
+  .form-grid label {
+    font-weight: 600;
+    font-size: 13px;
+    display: block;
+    margin-bottom: 4px;
+    color: var(--primary);
+  }
+
+  .form-grid input,
+  .form-grid select,
+  .form-grid textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #d1d5db;
+    border-radius: var(--radius);
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+    font-family: inherit;
+  }
+
+  .form-grid input:focus,
+  .form-grid select:focus,
+  .form-grid textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(10, 42, 26, 0.08);
+  }
+
+  .form-grid textarea {
+    resize: vertical;
+    min-height: 60px;
+  }
+
+  .btn-submit {
+    padding: 12px 28px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-top: 10px;
+  }
+
+  .btn-submit:hover {
+    background: var(--primary-light);
+  }
+
+  .btn-danger {
+    background: var(--danger);
+  }
+
+  .btn-danger:hover {
+    background: #7a1515;
+  }
+
+  .btn-success {
+    background: var(--success);
+  }
+
+  .btn-success:hover {
+    background: #0f4a2a;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  th, td {
+    padding: 10px 12px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+  }
+
+  th {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  tr:nth-child(even) {
+    background: #f8f9f8;
+  }
+
+  .action-btn {
+    padding: 4px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    transition: 0.2s;
+    margin: 2px;
+  }
+
+  .action-btn.delete {
+    background: var(--danger);
+    color: #fff;
+  }
+
+  .action-btn.delete:hover {
+    background: #7a1515;
+  }
+
+  .action-btn.edit {
+    background: var(--gold);
+    color: #fff;
+  }
+
+  .action-btn.edit:hover {
+    background: #9a7a2a;
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 14px 28px;
+    border-radius: var(--radius);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    z-index: 999;
+    display: none;
+    animation: slideDown 0.4s ease;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  }
+
+  .toast.success {
+    background: var(--success);
+  }
+
+  .toast.error {
+    background: var(--danger);
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  .generated-code {
+    background: #f0f7f0;
+    border: 2px solid var(--success);
+    padding: 12px;
+    border-radius: var(--radius);
+    text-align: center;
+    margin-top: 12px;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--primary);
+    letter-spacing: 4px;
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .admin-header {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .admin-stats {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .login-container {
+      margin: 40px 12px;
+      padding: 24px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== پیام توست ===== -->
+<div id="toast" class="toast"></div>
+
+<!-- ===== صفحه لاگین ===== -->
+<div id="loginContainer" class="login-container">
+  <h2>پنل مدیریت</h2>
+  <label>نام کاربری</label>
+  <input id="loginUser" type="text" value="admin" />
+  <label>رمز عبور</label>
+  <input id="loginPass" type="password" value="admin" />
+  <button class="btn" id="loginBtn">ورود</button>
+  <div id="loginError" class="login-error">❌ نام کاربری یا رمز عبور اشتباه است</div>
+</div>
+
+<!-- ===== پنل مدیریت ===== -->
+<div id="adminPanel" class="admin-panel">
+
+  <div class="admin-header">
+    <h1>📋 پنل مدیریت مشمولین</h1>
+    <div>
+      <span id="adminUser" style="margin-left:16px;font-weight:400;opacity:0.8;">admin</span>
+      <button class="logout-btn" id="logoutBtn">خروج</button>
+    </div>
+  </div>
+
+  <!-- آمار -->
+  <div class="admin-stats">
+    <div class="stat-box">
+      <div class="number" id="totalCount">0</div>
+      <div class="label">تعداد کل مشمولین</div>
+    </div>
+    <div class="stat-box">
+      <div class="number" id="activeCount">0</div>
+      <div class="label">در حال خدمت</div>
+    </div>
+    <div class="stat-box">
+      <div class="number" id="doneCount">0</div>
+      <div class="label">پایان خدمت</div>
+    </div>
+  </div>
+
+  <!-- فرم اضافه کردن -->
+  <div class="admin-card">
+    <h3>➕ افزودن مشمول جدید</h3>
+    <div class="form-grid">
+      <div>
+        <label>نام و نام خانوادگی *</label>
+        <input id="fName" placeholder="مثال: علیرضا عوض آقائی" />
+      </div>
+      <div>
+        <label>کد ملی *</label>
+        <input id="fNationalId" placeholder="مثال: ۲۴۲۰۴۵۴۰۵۷" />
+      </div>
+      <div>
+        <label>نام پدر *</label>
+        <input id="fFather" placeholder="مثال: حسین" />
+      </div>
+      <div>
+        <label>تاریخ تولد</label>
+        <input id="fBirth" placeholder="مثال: ۱۳۸۲/۰۳/۱۵" />
+      </div>
+      <div>
+        <label>تاریخ شروع خدمت *</label>
+        <input id="fStart" placeholder="مثال: ۱۴۰۳/۰۵/۰۶" />
+      </div>
+      <div>
+        <label>تاریخ پایان خدمت *</label>
+        <input id="fEnd" placeholder="مثال: ۱۴۰۵/۰۵/۰۶" />
+      </div>
+      <div>
+        <label>درجه خدمتی *</label>
+        <input id="fRank" placeholder="مثال: سرباز سرجوخه" />
+      </div>
+      <div>
+        <label>محل خدمت *</label>
+        <input id="fLocation" placeholder="مثال: پادگان ابوذر - مرزی" />
+      </div>
+      <div>
+        <label>وضعیت *</label>
+        <select id="fStatus">
+          <option value="در حال بررسی و تکمیل فرآیند">در حال بررسی و تکمیل فرآیند</option>
+          <option value="در حال خدمت">در حال خدمت</option>
+          <option value="پایان خدمت">پایان خدمت</option>
+        </select>
+      </div>
+      <div class="full-width">
+        <label>توضیحات تکمیلی</label>
+        <textarea id="fDescription" placeholder="توضیحات اضافی..."></textarea>
+      </div>
+    </div>
+    <button class="btn-submit" id="addBtn">➕ افزودن مشمول</button>
+    <div id="generatedCode" class="generated-code"></div>
+  </div>
+
+  <!-- لیست مشمولین -->
+  <div class="admin-card">
+    <h3>📋 لیست مشمولین</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>کد</th>
+            <th>نام</th>
+            <th>کد ملی</th>
+            <th>وضعیت</th>
+            <th>عملیات</th>
+          </tr>
+        </thead>
+        <tbody id="recordsTable">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+
+  // ============================================================
+  //  دیتابیس اولیه (همون رکوردهای قبلی)
+  // ============================================================
+  let records = {
+    "12587463": {
+      name: "علیرضا عوض آقائی",
+      nationalId: "۲۴۲۰۴۵۴۰۵۷",
+      fatherName: "حسین",
+      birthDate: "۱۳۸۲/۰۳/۱۵",
+      startDate: "۱۴۰۳/۰۵/۰۶",
+      endDate: "۱۴۰۵/۰۵/۰۶",
+      rank: "سرباز سرجوخه",
+      location: "پادگان ابوذر - مرزی",
+      status: "در حال بررسی و تکمیل فرآیند",
+      description: "مشمول در حال طی دوره آموزشی پایه - وضعیت: عادی"
+    },
+    "89341562": {
+      name: "محمد رضائیان",
+      nationalId: "۱۲۳۴۵۶۷۸۹۰",
+      fatherName: "علی",
+      birthDate: "۱۳۸۰/۰۷/۲۰",
+      startDate: "۱۴۰۲/۰۹/۱۰",
+      endDate: "۱۴۰۴/۰۹/۱۰",
+      rank: "سرباز وظیفه",
+      location: "پادگان شهید دوران - مشهد",
+      status: "در حال خدمت",
+      description: "دوره تخصصی مخابرات - وضعیت: فعال"
+    },
+    "47851269": {
+      name: "سعید مرادی",
+      nationalId: "۹۸۷۶۵۴۳۲۱۰",
+      fatherName: "حسن",
+      birthDate: "۱۳۷۹/۱۱/۰۵",
+      startDate: "۱۴۰۱/۱۲/۰۱",
+      endDate: "۱۴۰۳/۱۲/۰۱",
+      rank: "سرباز گروهبان دوم",
+      location: "پادگان شهید صیاد شیرازی - تهران",
+      status: "پایان خدمت",
+      description: "خدمت مقدس به پایان رسیده - وضعیت: معافیت دائم"
+    },
+    "85236974": {
+      name: "امیر حسینی",
+      nationalId: "۵۵۵۵۵۵۵۵۵۵",
+      fatherName: "رضا",
+      birthDate: "۱۳۸۱/۰۲/۱۴",
+      startDate: "۱۴۰۳/۰۱/۲۰",
+      endDate: "۱۴۰۵/۰۱/۲۰",
+      rank: "سرباز سرجوخه",
+      location: "پادگان ولیعصر - کرج",
+      status: "در حال خدمت",
+      description: "دوره رزمی مقدماتی - وضعیت: فعال"
+    },
+    "74123658": {
+      name: "حسین اکبری",
+      nationalId: "۷۷۷۷۷۷۷۷۷۷",
+      fatherName: "محمود",
+      birthDate: "۱۳۸۰/۰۶/۳۰",
+      startDate: "۱۴۰۲/۰۷/۱۵",
+      endDate: "۱۴۰۴/۰۷/۱۵",
+      rank: "سرباز گروهبان سوم",
+      location: "پادگان شهید ستاری - اصفهان",
+      status: "در حال خدمت",
+      description: "دوره تخصصی رایانه - وضعیت: فعال"
+    }
+  };
+
+  // ============================================================
+  //  توابع کمکی
+  // ============================================================
+  function generateCode() {
+    // تولید کد ۸ رقمی تصادفی
+    let code;
+    let attempts = 0;
+    do {
+      code = String(Math.floor(10000000 + Math.random() * 90000000));
+      attempts++;
+    } while (records[code] && attempts < 100);
+    return code;
+  }
+
+  function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast ' + type;
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 3000);
+  }
+
+  function updateStats() {
+    const total = Object.keys(records).length;
+    const active = Object.values(records).filter(r => r.status === 'در حال خدمت' || r.status === 'در حال بررسی و تکمیل فرآیند').length;
+    const done = Object.values(records).filter(r => r.status === 'پایان خدمت').length;
+    document.getElementById('totalCount').textContent = total;
+    document.getElementById('activeCount').textContent = active;
+    document.getElementById('doneCount').textContent = done;
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('recordsTable');
+    const keys = Object.keys(records);
+    if (keys.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="padding:20px;color:#6b7280;">هیچ مشمولی ثبت نشده است</td></tr>';
+      return;
+    }
+    let html = '';
+    keys.forEach(code => {
+      const r = records[code];
+      html += `
+        <tr>
+          <td><strong>${code}</strong></td>
+          <td>${r.name}</td>
+          <td>${r.nationalId}</td>
+          <td>${r.status}</td>
+          <td>
+            <button class="action-btn delete" onclick="deleteRecord('${code}')">🗑️ حذف</button>
+          </td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = html;
+    updateStats();
+  }
+
+  // ============================================================
+  //  توابع گلوبال (برای onclick)
+  // ============================================================
+  window.deleteRecord = function(code) {
+    if (!confirm(`آیا از حذف مشمول با کد ${code} مطمئن هستید؟`)) return;
+    delete records[code];
+    renderTable();
+    showToast('مشمول با موفقیت حذف شد', 'success');
+    // به‌روزرسانی localStorage
+    saveToStorage();
+  };
+
+  // ============================================================
+  //  ذخیره و بازیابی از localStorage
+  // ============================================================
+  function saveToStorage() {
+    try {
+      localStorage.setItem('militaryRecords', JSON.stringify(records));
+    } catch(e) {}
+  }
+
+  function loadFromStorage() {
+    try {
+      const data = localStorage.getItem('militaryRecords');
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (Object.keys(parsed).length > 0) {
+          records = parsed;
+        }
+      }
+    } catch(e) {}
+  }
+
+  // ============================================================
+  //  لاگین
+  // ============================================================
+  const loginContainer = document.getElementById('loginContainer');
+  const adminPanel = document.getElementById('adminPanel');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginError = document.getElementById('loginError');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  function doLogin() {
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value.trim();
+    if (user === 'admin' && pass === 'admin') {
+      loginContainer.style.display = 'none';
+      adminPanel.style.display = 'block';
+      loginError.style.display = 'none';
+      loadFromStorage();
+      renderTable();
+      showToast('به پنل مدیریت خوش آمدید', 'success');
+    } else {
+      loginError.style.display = 'block';
+    }
+  }
+
+  loginBtn.addEventListener('click', doLogin);
+
+  document.getElementById('loginPass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLogin();
+  });
+
+  document.getElementById('loginUser').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLogin();
+  });
+
+  logoutBtn.addEventListener('click', function() {
+    if (confirm('آیا از خروج مطمئن هستید؟')) {
+      adminPanel.style.display = 'none';
+      loginContainer.style.display = 'block';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginError').style.display = 'none';
+    }
+  });
+
+  // ============================================================
+  //  افزودن مشمول جدید
+  // ============================================================
+  document.getElementById('addBtn').addEventListener('click', function() {
+    const name = document.getElementById('fName').value.trim();
+    const nationalId = document.getElementById('fNationalId').value.trim();
+    const fatherName = document.getElementById('fFather').value.trim();
+    const birthDate = document.getElementById('fBirth').value.trim();
+    const startDate = document.getElementById('fStart').value.trim();
+    const endDate = document.getElementById('fEnd').value.trim();
+    const rank = document.getElementById('fRank').value.trim();
+    const location = document.getElementById('fLocation').value.trim();
+    const status = document.getElementById('fStatus').value;
+    const description = document.getElementById('fDescription').value.trim();
+
+    // اعتبارسنجی
+    if (!name || !nationalId || !fatherName || !startDate || !endDate || !rank || !location) {
+      showToast('لطفاً تمام فیلدهای الزامی (*) را پر کنید', 'error');
+      return;
+    }
+
+    // تولید کد
+    const code = generateCode();
+    if (!code) {
+      showToast('خطا در تولید کد، لطفاً دوباره تلاش کنید', 'error');
+      return;
+    }
+
+    // ثبت
+    records[code] = {
+      name,
+      nationalId,
+      fatherName,
+      birthDate: birthDate || '—',
+      startDate,
+      endDate,
+      rank,
+      location,
+      status,
+      description: description || '—'
+    };
+
+    // نمایش کد تولید شده
+    const generatedDiv = document.getElementById('generatedCode');
+    generatedDiv.textContent = '✅ کد پیگیری: ' + code;
+    generatedDiv.style.display = 'block';
+
+    // پاک کردن فرم
+    document.getElementById('fName').value = '';
+    document.getElementById('fNationalId').value = '';
+    document.getElementById('fFather').value = '';
+    document.getElementById('fBirth').value = '';
+    document.getElementById('fStart').value = '';
+    document.getElementById('fEnd').value = '';
+    document.getElementById('fRank').value = '';
+    document.getElementById('fLocation').value = '';
+    document.getElementById('fDescription').value = '';
+
+    saveToStorage();
+    renderTable();
+    showToast(`مشمول با کد ${code} با موفقیت افزوده شد`, 'success');
+
+    // مخفی کردن کد بعد از ۵ ثانیه
+    setTimeout(() => {
+      generatedDiv.style.display = 'none';
+    }, 8000);
+  });
+
+  // ============================================================
+  //  بارگذاری اولیه
+  // ============================================================
+  loadFromStorage();
+  renderTable();
+
+  // اگر قبلاً لاگین کرده بودیم (برای رفاه)
+  // (در حالت عادی لاگین می‌خواهد)
+
+})();
+</script>
+
+</body>
+</html>
