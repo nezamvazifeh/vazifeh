@@ -612,7 +612,7 @@
       rank: "اتمام خدمت",
       location: "--",
       status: "پایان خدمت",
-      description: "اتمام خدمت -فعال"
+      description: "اتمام خدمت - فعال"
     },
 
     "74123658": {
@@ -626,6 +626,32 @@
       location: "پزشکی ماده ۲۹ بند ۷",
       status: "معافیت دائم",
       description: "وضعیت: فعال"
+    },
+
+    "22941622": {
+      name: "نعمت‌اله حاتمی",
+      nationalId: "۲۲۹۴۱۶۲۲۲۶",
+      fatherName: "عبداله",
+      birthDate: "۱۳۴۴/۰۳/۱۹",
+      startDate: "۱۳۶۴/۰۷/۲۰",
+      endDate: "۱۳۷۲/۱۰/۰۵",
+      rank: "سرباز / اتمام خدمت",
+      location: "مرزی",
+      status: "اتمام خدمت",
+      description: "فعال"
+    },
+
+    "55608852": {
+      name: "ابوالفضل مطیعی",
+      nationalId: "۵۵۶۰۸۸۵۲۷۴",
+      fatherName: "حسین",
+      birthDate: "۱۳۸۴/۰۲/۲۶",
+      startDate: "۱۴۰۳/۱۱/۱۹",
+      endDate: "۱۴۰۵/۰۶/۱۹",
+      rank: "سرباز اتمام خدمت",
+      location: "مرزی",
+      status: "اتمام خدمت",
+      description: "فعال"
     }
   };
 
@@ -662,8 +688,11 @@
   function getStatusBadge(status) {
     const map = {
       'در حال بررسی و تکمیل فرآیند': 'active',
+      'درحال بررسی و تکمیل فرآیند': 'active',
       'در حال خدمت': 'active',
-      'پایان خدمت': 'done'
+      'پایان خدمت': 'done',
+      'اتمام خدمت': 'done',
+      'معافیت دائم': 'done'
     };
     return map[status] || '';
   }
